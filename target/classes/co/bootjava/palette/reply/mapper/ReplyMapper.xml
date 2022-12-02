@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.bootjava.palette.reply.mapper.ReplyMapper">
+
+	<select id="replySelectList"
+		resultType="co.bootjava.palette.reply.vo.ReplyVO">
+		select * from reply where reply_number=#{replyNumber} order
+		by reply_date desc
+	</select>
+
+	<insert id="replyInsert"
+		parameterType="co.bootjava.palette.reply.vo.ReplyVO">
+		insert into reply
+		values(#{replyNumber},#{replyGiveId},#{replyContent},sysdate)
+	</insert>
+	<delete id="replyDelete"
+		parameterType="co.bootjava.palette.reply.vo.ReplyVO">
+		DELETE FROM reply
+		WHERE reply_give_id=#{replyGiveId} and reply_content=#{replyContent} and reply_number=#{replyNumber}
+	</delete>
+</mapper>

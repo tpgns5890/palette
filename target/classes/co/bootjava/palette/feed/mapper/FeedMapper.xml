@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.bootjava.palette.feed.mapper.FeedMapper">
+	<select id="feedSelectList"
+		resultType="co.bootjava.palette.feed.vo.FeedVO">SELECT * FROM FEED ORDER BY FEED_NUM </select>
+
+	<select id="feedSelect"
+		resultType="co.bootjava.palette.feed.vo.FeedVO">SELECT * FROM FEED WHERE FEED_NUM = #{feedNum} </select>
+
+	<select id="feedSelected"
+		resultType="co.bootjava.palette.feed.vo.FeedVO">SELECT * FROM FEED WHERE FEED_NUM = #{feedNum} </select>
+
+	<select id="userIdCheck"
+		resultType="co.bootjava.palette.feed.vo.FeedVO">SELECT CASE WHEN COUNT(user_id) = 1 THEN 0 ELSE 1 END AS
+		USER_IDFROM FEED WHERE user_id= #{user_id} </select>
+
+	<insert id="feedInsert"
+		parameterType="co.bootjava.palette.feed.vo.FeedVO">insert into feed values
+		(feed_num.nextval,#{userId},#{userFollower},#{userArt},#{userName},#{userEmail},#{userSchool},#{userMajor})
+	</insert>
+
+	<delete id="feedDelete"
+		parameterType="co.bootjava.palette.feed.vo.FeedVO">DELETE FROM FEED WHERE FEED_NUM = #{feedNum} </delete>
+
+	<update id="feedUpdate"
+		parameterType="co.bootjava.palette.feed.vo.FeedVO">UPDATE FEEDSET USER_ID = #{userId},USER_FOLLOWER
+		=#{userFollower},USER_ART = #{userArt},USER_NAME
+		=#{userName},USER_EMAIL = #{userEmail},USER_SCHOOL
+		=#{userSchool},USER_MAJOR = #{userMajor}WHERE FEED_NUM = #{feedNum}
+	</update>
+
+	<select id="mainFeedList"
+		resultType="co.bootjava.palette.feed.vo.FeedVO">
+		SELECT * FROM (SELECT * FROM FEED ORDER BY USER_FOLLOWER DESC) WHERE
+		ROWNUM
+		-<![CDATA[<=]]>6
+	</select>
+
+	<select id="isFeedExist"
+		resultType="co.bootjava.palette.feed.vo.FeedVO">SELECT * FROM FEED WHERE USER_ID = #{id} </select>
+</mapper>

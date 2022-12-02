@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.bootjava.palette.board.mapper.BoardMapper">	
+	<select id="boardDetailList"
+		resultType="co.bootjava.palette.board.vo.BoardVO">
+		SELECT * FROM BOARD WHERE BOARD_TITLE LIKE '%'||#{boardTitle}||'%' OR BOARD_WRITER LIKE '%'||#{boardWriter}||'%' OR BOARD_CONTENT
+		LIKE '%'||#{boardContent}||'%'
+	</select>
+		
+	<select id="myBoardList" resultType="co.bootjava.palette.board.vo.BoardVO">
+	 	SELECT * FROM BOARD WHERE USER_ID=#{userId}
+	</select>
+
+	<select id="boardSelectList"
+		resultType="co.bootjava.palette.board.vo.BoardVO">
+		SELECT * FROM BOARD ORDER BY BOARD_NUMBER DESC
+	</select>
+	
+	<select id="boardTodayList"
+		resultType="co.bootjava.palette.board.vo.BoardVO">
+		 SELECT * FROM BOARD WHERE CREATE_DATE > TO_CHAR(SYSDATE, 'YYYYMMDD') ORDER BY VIEW_CNT DESC
+	</select>
+
+	<select id="boardSelect"
+		resultType="co.bootjava.palette.board.vo.BoardVO">
+		SELECT * FROM BOARD WHERE BOARD_NUMBER=${boardNumber}
+	</select>
+
+	<insert id="boardInsert"
+		parameterType="co.bootjava.palette.board.vo.BoardVO">
+		INSERT INTO BOARD
+		VALUES(BOARD_SEQ.NEXTVAL,#{userId},#{boardTitle},#{boardContent},#{boardWriter},SYSDATE,0)
+	</insert>
+
+	<delete id="boardDelete"
+		parameterType="co.bootjava.palette.board.vo.BoardVO">
+		DELETE FROM BOARD WHERE BOARD_NUMBER=${boardNumber}
+	</delete>
+
+	<update id="boardUpdate"
+		parameterType="co.bootjava.palette.board.vo.BoardVO">
+		UPDATE BOARD SET
+		BOARD_TITLE=#{boardTitle},BOARD_CONTENT=#{boardContent}
+		,CREATE_DATE=SYSDATE WHERE BOARD_NUMBER=#{boardNumber}
+	</update>
+
+	<update id="viewCnt"
+		parameterType="co.bootjava.palette.board.vo.BoardVO">
+		UPDATE BOARD SET VIEW_CNT=VIEW_CNT+1 WHERE
+		BOARD_NUMBER=#{boardNumber}
+	</update>
+	
+	<update id="boardBan" parameterType="co.bootjava.palette.account.vo.AccountVO">
+		UPDATE ACCOUNT SET BAN=BAN+1 WHERE ID=#{id}
+	</update>
+	
+	<select id="mainBoardList" resultType="co.bootjava.palette.board.vo.BoardVO">
+		SELECT * FROM (SELECT * FROM BOARD ORDER BY CREATE_DATE DESC) WHERE ROWNUM <![CDATA[<=]]> 10
+	</select>
+	
+	
+	
+	<select id="totalCnt" resultType="_integer">
+       SELECT NVL(COUNT(*), 0) AS CNT FROM  BOARD
+   </select>
+   <!-- 페이지리스트 -->
+   
+   <select id="pageList"
+      resultType="co.bootjava.palette.board.vo.BoardVO">
+      SELECT B.*
+      FROM(SELECT ROWNUM RN, A.*
+      FROM (SELECT *
+      FROM board
+      ORDER BY
+      BOARD_NUMBER DESC) A 
+      <![CDATA[WHERE ROWNUM <= #{pg} * 10) B]]>
+      WHERE B.RN >= (#{pg} -1) * 10 + 1
+   </select>
+</mapper>
